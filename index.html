@@ -40,51 +40,60 @@
     #yes { background: #ff2f6d; color: white; }
     #no  { background: #555; color: white; position: fixed; transition: left 140ms ease, top 140ms ease; left: 60%; top: 50%; }
 
-    /* --- PAGE 2: LOVE MESSAGE (MATCHING IMAGE) --- */
+    /* --- PAGE 2: LOVE PAGE (MATCHING YOUR IMAGE) --- */
     #page2 {
       display: none; 
       z-index: 10;
       width: 100%;
     }
     #page2 h1 {
-      font-size: 48px;
+      font-size: 52px;
       font-weight: bold;
-      margin-bottom: 60px;
+      margin-bottom: 40px;
       color: white;
       text-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+      font-family: 'Courier New', Courier, monospace; /* Matching the typewriter feel in image */
     }
 
-    /* Surprise Me Button Style from Image */
+    /* Surprise Me Button Style */
     #surpriseBtn {
       background: #ff5e99;
       color: white;
-      padding: 12px 40px;
+      padding: 14px 45px;
       font-size: 18px;
-      border-radius: 25px;
+      border-radius: 30px;
       box-shadow: 0 4px 15px rgba(255, 94, 153, 0.4);
       cursor: pointer;
       border: none;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
+      transition: transform 0.2s;
     }
+    #surpriseBtn:active { transform: scale(0.95); }
 
-    /* Decorative heart line from Image */
+    /* Decorative heart line SVG */
     .heart-divider {
-      width: 250px;
-      height: auto;
-      margin-top: 10px;
+      width: 280px;
+      display: block;
+      margin: 0 auto;
     }
 
     #secret {
-      display: none; /* Hidden until Surprise Me is clicked */
+      display: none; 
       margin: 20px auto;
       font-size: 22px;
       max-width: 85%;
       line-height: 1.6;
       color: white;
-      background: rgba(255, 255, 255, 0.2);
-      padding: 20px;
+      background: rgba(255, 255, 255, 0.25);
+      padding: 25px;
       border-radius: 20px;
-      backdrop-filter: blur(8px);
+      backdrop-filter: blur(10px);
+      animation: fadeIn 0.8s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     /* --- EFFECTS --- */
@@ -143,11 +152,9 @@
       Saying YES made my world brighter 🌸✨
     </div>
 
-    <br>
-    <svg class="heart-divider" viewBox="0 0 300 50" xmlns="http://www.w3.org/2000/svg">
-      <path d="M10 25 H135 Q150 5 165 25 T195 25 H290" fill="none" stroke="white" stroke-width="2"/>
-      <path d="M140 25 Q150 10 160 25 Q150 40 140 25" fill="#white" stroke="white" stroke-width="2"/>
-      <circle cx="150" cy="25" r="3" fill="white" />
+    <svg class="heart-divider" viewBox="0 0 300 60" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20 40 H130 Q150 10 170 40 H280" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M135 40 Q150 20 165 40 Q150 60 135 40" fill="none" stroke="white" stroke-width="2.5"/>
     </svg>
   </div>
 
@@ -165,7 +172,7 @@
     const sticker = document.getElementById('sticker');
     const heartsLayer = document.querySelector('.hearts-layer');
 
-    // --- NO BUTTON LOGIC ---
+    // --- NO BUTTON JUMP ---
     function moveNo() {
       const maxX = window.innerWidth - noBtn.offsetWidth - 20;
       const maxY = window.innerHeight - noBtn.offsetHeight - 20;
@@ -173,6 +180,7 @@
       noBtn.style.top  = Math.random() * maxY + 'px';
     }
     noBtn.addEventListener('mouseenter', moveNo);
+    noBtn.addEventListener('click', (e) => { e.preventDefault(); moveNo(); });
 
     // --- HEART RAIN ---
     function spawnHeart() {
@@ -181,14 +189,14 @@
       el.textContent = ['❤️','💖','💘','💕'][Math.floor(Math.random() * 4)];
       el.style.left = Math.random() * 100 + 'vw';
       el.style.fontSize = (16 + Math.random() * 30) + 'px';
-      el.style.setProperty('--dx', (Math.random() * 100 - 50) + 'px');
-      el.style.setProperty('--rot', (Math.random() * 60 - 30) + 'deg');
+      el.style.setProperty('--dx', (Math.random() * 120 - 60) + 'px');
+      el.style.setProperty('--rot', (Math.random() * 80 - 40) + 'deg');
       el.style.animation = `heartFloat ${3000 + Math.random() * 3000}ms linear forwards`;
       heartsLayer.appendChild(el);
       setTimeout(() => el.remove(), 6000);
     }
 
-    // --- TRANSITION TO PAGE 2 ---
+    // --- TRANSITION TO LOVE PAGE ---
     yesBtn.addEventListener('click', () => {
       sticker.classList.add('show');
       confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
@@ -196,6 +204,7 @@
       setTimeout(() => {
         sticker.classList.remove('show');
         page1.style.display = 'none';
+        // Applying the pink gradient from Love.html
         document.body.style.background = "linear-gradient(180deg, #ff7aa2, #ff9eb8)";
         page2.style.display = 'block';
         setInterval(spawnHeart, 400);
@@ -207,7 +216,7 @@
       secret.style.display = 'block';
       surpriseBtn.style.display = 'none';
       // Extra burst of hearts when surprise is clicked
-      for(let i=0; i<15; i++) setTimeout(spawnHeart, i*100);
+      for(let i=0; i<20; i++) setTimeout(spawnHeart, i*80);
     });
   </script>
 </body>
