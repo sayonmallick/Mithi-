@@ -13,22 +13,22 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      background: #ffe6ec; /* Start background from index.html */
+      background: #ffe6ec; 
       font-family: 'Arial', sans-serif;
       overflow: hidden;
-      transition: background 1.5s ease; /* Smooth transition between pages */
+      transition: background 1.5s ease;
       color: #d1004f;
       text-align: center;
     }
 
-    /* --- PAGE 1: PROPOSAL STYLES --- */
+    /* --- PAGE 1: PROPOSAL --- */
     #page1 {
       display: flex;
       flex-direction: column;
       align-items: center;
       z-index: 10;
     }
-    .buttons { display: flex; align-items: center; gap: 20px; position: relative; }
+    .buttons { display: flex; align-items: center; gap: 20px; position: relative; margin-top: 20px; }
     button {
       padding: 15px 30px;
       font-size: 18px;
@@ -40,32 +40,54 @@
     #yes { background: #ff2f6d; color: white; }
     #no  { background: #555; color: white; position: fixed; transition: left 140ms ease, top 140ms ease; left: 60%; top: 50%; }
 
-    /* --- PAGE 2: LOVE MESSAGE STYLES --- */
+    /* --- PAGE 2: LOVE MESSAGE (MATCHING IMAGE) --- */
     #page2 {
-      display: none; /* Hidden until YES is clicked */
+      display: none; 
       z-index: 10;
-      color: white;
+      width: 100%;
     }
     #page2 h1 {
-      font-size: 42px;
-      font-weight: 300;
-      letter-spacing: 2px;
-      margin-bottom: 40px;
-      text-shadow: 0 0 12px rgba(255,255,255,0.6);
+      font-size: 48px;
+      font-weight: bold;
+      margin-bottom: 60px;
       color: white;
+      text-shadow: 2px 2px 10px rgba(0,0,0,0.1);
     }
+
+    /* Surprise Me Button Style from Image */
+    #surpriseBtn {
+      background: #ff5e99;
+      color: white;
+      padding: 12px 40px;
+      font-size: 18px;
+      border-radius: 25px;
+      box-shadow: 0 4px 15px rgba(255, 94, 153, 0.4);
+      cursor: pointer;
+      border: none;
+      margin-bottom: 20px;
+    }
+
+    /* Decorative heart line from Image */
+    .heart-divider {
+      width: 250px;
+      height: auto;
+      margin-top: 10px;
+    }
+
     #secret {
-      margin-top: 40px;
+      display: none; /* Hidden until Surprise Me is clicked */
+      margin: 20px auto;
       font-size: 22px;
-      max-width: 80%;
+      max-width: 85%;
       line-height: 1.6;
+      color: white;
       background: rgba(255, 255, 255, 0.2);
       padding: 20px;
       border-radius: 20px;
-      backdrop-filter: blur(5px);
+      backdrop-filter: blur(8px);
     }
 
-    /* --- EFFECTS & OVERLAYS --- */
+    /* --- EFFECTS --- */
     #sticker {
       position: fixed;
       left: 50%;
@@ -94,7 +116,6 @@
       bottom: -60px;
       user-select: none;
       will-change: transform, opacity;
-      display: inline-block;
     }
     @keyframes heartFloat {
       0%   { transform: translateY(0) translateX(0) scale(0.85) rotate(0deg); opacity: 1; }
@@ -113,11 +134,21 @@
   </div>
 
   <div id="page2">
-    <h1>I Love You<br>Shivani 💖</h1>
+    <h1>I Love You</h1>
+    
+    <button id="surpriseBtn">Surprise Me</button>
+
     <div id="secret">
       💌 You are the most beautiful part of my life.<br>
       Saying YES made my world brighter 🌸✨
     </div>
+
+    <br>
+    <svg class="heart-divider" viewBox="0 0 300 50" xmlns="http://www.w3.org/2000/svg">
+      <path d="M10 25 H135 Q150 5 165 25 T195 25 H290" fill="none" stroke="white" stroke-width="2"/>
+      <path d="M140 25 Q150 10 160 25 Q150 40 140 25" fill="#white" stroke="white" stroke-width="2"/>
+      <circle cx="150" cy="25" r="3" fill="white" />
+    </svg>
   </div>
 
   <img id="sticker" src="https://raw.githubusercontent.com/sayonmallick/Guest/main/myphoto.jpg" alt="Sticker">
@@ -129,21 +160,21 @@
     const page2 = document.getElementById('page2');
     const yesBtn = document.getElementById('yes');
     const noBtn = document.getElementById('no');
+    const surpriseBtn = document.getElementById('surpriseBtn');
+    const secret = document.getElementById('secret');
     const sticker = document.getElementById('sticker');
     const heartsLayer = document.querySelector('.hearts-layer');
 
-    // --- NO BUTTON JUMP LOGIC ---
+    // --- NO BUTTON LOGIC ---
     function moveNo() {
-      const padding = 20;
-      const maxX = window.innerWidth - noBtn.offsetWidth - padding;
-      const maxY = window.innerHeight - noBtn.offsetHeight - padding;
+      const maxX = window.innerWidth - noBtn.offsetWidth - 20;
+      const maxY = window.innerHeight - noBtn.offsetHeight - 20;
       noBtn.style.left = Math.random() * maxX + 'px';
       noBtn.style.top  = Math.random() * maxY + 'px';
     }
     noBtn.addEventListener('mouseenter', moveNo);
-    noBtn.addEventListener('click', (e) => { e.preventDefault(); moveNo(); });
 
-    // --- HEART RAIN SYSTEM ---
+    // --- HEART RAIN ---
     function spawnHeart() {
       const el = document.createElement('div');
       el.className = 'heart';
@@ -153,34 +184,31 @@
       el.style.setProperty('--dx', (Math.random() * 100 - 50) + 'px');
       el.style.setProperty('--rot', (Math.random() * 60 - 30) + 'deg');
       el.style.animation = `heartFloat ${3000 + Math.random() * 3000}ms linear forwards`;
-
       heartsLayer.appendChild(el);
       setTimeout(() => el.remove(), 6000);
     }
 
-    // --- TRANSITION LOGIC ---
+    // --- TRANSITION TO PAGE 2 ---
     yesBtn.addEventListener('click', () => {
-      // 1. Show celebration from index.html
       sticker.classList.add('show');
       confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
 
-      // 2. Switch to Love.html content
       setTimeout(() => {
         sticker.classList.remove('show');
         page1.style.display = 'none';
-        
-        // Transition to the gradient background from Love.html
         document.body.style.background = "linear-gradient(180deg, #ff7aa2, #ff9eb8)";
-        
         page2.style.display = 'block';
-        
-        // Start heavy heart rain
-        setInterval(spawnHeart, 300);
+        setInterval(spawnHeart, 400);
       }, 2000);
     });
 
-    // Initial subtle hearts
-    setInterval(spawnHeart, 1000);
+    // --- SURPRISE CLICK ---
+    surpriseBtn.addEventListener('click', () => {
+      secret.style.display = 'block';
+      surpriseBtn.style.display = 'none';
+      // Extra burst of hearts when surprise is clicked
+      for(let i=0; i<15; i++) setTimeout(spawnHeart, i*100);
+    });
   </script>
 </body>
 </html>
